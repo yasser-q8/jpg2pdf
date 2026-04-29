@@ -2,10 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>محول الصور الذكي - ياسر الخطيب</title>
+    <title>محول الصور لـ PDF - ياسر الخطيب</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* تنسيق الخلفية العامة للبرنامج */
+        /* خلفية فاتحة ومريحة */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0;
@@ -13,80 +13,103 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(45deg, #2c3e50, #4ca1af); /* ألوان خلفية احترافية */
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
             color: #333;
         }
 
         .container { 
-            background: rgba(255, 255, 255, 0.9); 
-            padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            background: rgba(255, 255, 255, 1); 
+            padding: 60px; 
+            border-radius: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05); 
             text-align: center;
-            width: 400px;
+            width: 500px;
         }
 
-        h2 { margin-bottom: 20px; color: #2c3e50; }
-        input[type="file"] { margin: 20px 0; width: 100%; }
-        
-        button { 
-            background-color: #ff6e00; 
+        h2 { margin-bottom: 40px; color: #2c3e50; font-size: 2rem; }
+
+        /* --- تكبير وتلوين زر اختيار الملفات --- */
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 25px; /* زيادة المساحة الداخلية للضعف */
+            margin-bottom: 35px;
+            border: 3px dashed #2196F3; /* لون أزرق جذاب */
+            border-radius: 15px;
+            background-color: #f8fbff;
+            cursor: pointer;
+            font-size: 18px; /* تكبير الخط */
+            font-weight: bold;
+            color: #2196F3;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background-color: #e3f2fd;
+            border-color: #1976D2;
+        }
+
+        /* --- زر تحميل الـ PDF المحسن --- */
+        .upload-btn { 
+            background: linear-gradient(135deg, #00b09b, #96c93d); 
             color: white; 
             border: none; 
-            padding: 12px 25px; 
-            border-radius: 25px; 
+            padding: 20px 40px;
+            border-radius: 50px; 
             cursor: pointer; 
-            font-size: 16px;
-            font-weight: bold;
-            transition: 0.3s;
+            font-size: 22px; 
+            font-weight: 800;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 176, 155, 0.2);
+            width: 100%;
         }
 
-        button:hover { background-color: #e66300; transform: scale(1.05); }
+        .upload-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 25px rgba(0, 176, 155, 0.4);
+        }
 
-        /* --- تنسيق التوقيع المأخوذ من ملفك بدقة --- */
+        #status { margin-top: 25px; font-weight: 600; color: #2ecc71; }
+
+        /* --- توقيع المطور (ياسر الخطيب) - من ملفك الأصلي --- */
         .signature-card {
-            position: fixed; 
-            bottom: 20px; 
-            left: 20px; 
-            background: linear-gradient(135deg, #FF6E00, #2196F3); 
-            color: white; 
-            padding: 10.5px 17.5px; 
-            border-radius: 8.5px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; [cite: 3]
-            font-size: 0.8rem; [cite: 3]
-            font-weight: 600; [cite: 3]
-            z-index: 1000; [cite: 3]
-            animation: float 6s ease-in-out infinite; [cite: 3]
-            transition: all 0.3s ease; [cite: 4]
-            cursor: pointer; [cite: 4]
-            border: 2px solid rgba(255,255,255,0.2); [cite: 4]
-            text-decoration: none; [cite: 4]
-            display: inline-block; [cite: 7]
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #FF6E00, #2196F3);
+            color: white;
+            padding: 10.5px 17.5px;
+            border-radius: 8.5px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 1000;
+            animation: float 6s ease-in-out infinite;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            text-decoration: none;
+            display: inline-block;
         }
 
         .signature-card:hover { 
-            transform: scale(1.05); [cite: 8]
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4); [cite: 8]
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
         }
 
         @keyframes float { 
-            0% { transform: translateY(0px); } [cite: 9]
-            50% { transform: translateY(-15px); } [cite: 9]
-            100% { transform: translateY(0px); } [cite: 9]
+            0% { transform: translateY(0px); } 
+            50% { transform: translateY(-15px); } 
+            100% { transform: translateY(0px); } 
         }
 
-        .signature-card .name { 
-            font-size: 0.95rem; [cite: 14]
-            font-weight: 700; [cite: 14]
-            margin-bottom: 5px; [cite: 14]
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3); [cite: 14]
-        }
+        .signature-card .name { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; }
+        .signature-card .title { font-size: 0.7rem; opacity: 0.9; }
 
-        .signature-card .title { 
-            font-size: 0.7rem; [cite: 15]
-            opacity: 0.9; [cite: 15]
-            font-weight: 500; [cite: 15]
+        @media (max-width: 768px) { 
+            .signature-card { position: relative; bottom: auto; left: auto; margin: 20px auto; animation: none; }
         }
     </style>
 </head>
@@ -94,15 +117,16 @@
 
 <div class="container">
     <h2>محول الصور إلى PDF</h2>
-    <p>اختر الصور ليتم دمجها في ملف واحد مضغوط</p>
+    
     <input type="file" id="imageInput" accept="image/*" multiple>
-    <br>
-    <button onclick="generatePDF()">تحويل وتحميل PDF</button>
-    <p id="status" style="margin-top:15px;"></p>
+    
+    <button class="upload-btn" onclick="generatePDF()">إنشاء وتحميل PDF</button>
+    
+    <p id="status"></p>
 </div>
 
 <a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank" rel="noopener noreferrer">
-    <div class="name">Yasser Elkhateeb</div> 
+    <div class="name">Yasser Elkhateeb</div>
     <div class="title">مطور البرنامج 67011143</div>
 </a>
 
@@ -113,11 +137,11 @@
         const status = document.getElementById('status');
         
         if (input.files.length === 0) {
-            alert("يرجى اختيار صور أولاً");
+            alert("يرجى اختيار الصور أولاً");
             return;
         }
 
-        status.innerText = "جاري المعالجة والضغط...";
+        status.innerText = "جاري معالجة الملفات وتقليل الحجم...";
         const pdf = new jsPDF();
 
         for (let i = 0; i < input.files.length; i++) {
@@ -130,11 +154,11 @@
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-            // لتقليل الحجم: نستخدم صيغة JPEG مع إضافة معامل الضغط 'FAST'
+            // استخدام خاصية FAST لتقليل حجم الـ PDF النهائي
             pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         }
 
-        pdf.save("yasser_document.pdf");
+        pdf.save("YSR_Jpg2Pdf.pdf");
         status.innerText = "تم التحميل بنجاح!";
     }
 
