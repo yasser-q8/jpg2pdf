@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>محول الصور لـ PDF - ياسر الخطيب</title>
+    <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* خلفية فاتحة ومريحة */
+        /* تنسيق الخلفية بألوان هادئة ومتناسقة مع الشعار */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0;
@@ -13,49 +14,59 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
+            background: linear-gradient(135deg, #f5f7fa 0%, #d6e0f0 100%); 
             color: #333;
         }
 
         .container { 
             background: rgba(255, 255, 255, 1); 
-            padding: 60px; 
+            padding: 40px; 
             border-radius: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05); 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08); 
             text-align: center;
-            width: 500px;
+            width: 480px;
+            position: relative;
         }
 
-        h2 { margin-bottom: 40px; color: #2c3e50; font-size: 2rem; }
+        /* تنسيق الشعار المرفق داخل الحاوية  */
+        .logo-img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
-        /* --- تكبير وتلوين زر اختيار الملفات --- */
+        h2 { margin-bottom: 30px; color: #2c3e50; font-size: 1.6rem; }
+
+        /* زر اختيار الملفات المكبر والملون */
         input[type="file"] {
             display: block;
             width: 100%;
-            padding: 25px; /* زيادة المساحة الداخلية للضعف */
-            margin-bottom: 35px;
-            border: 3px dashed #2196F3; /* لون أزرق جذاب */
-            border-radius: 15px;
-            background-color: #f8fbff;
+            padding: 30px; 
+            margin-bottom: 30px;
+            border: 3px dashed #FF6E00; /* لون من وحي التوقيع والشعار */
+            border-radius: 20px;
+            background-color: #fff9f5;
             cursor: pointer;
-            font-size: 18px; /* تكبير الخط */
+            font-size: 18px;
             font-weight: bold;
-            color: #2196F3;
+            color: #FF6E00;
             box-sizing: border-box;
             transition: all 0.3s ease;
         }
 
         input[type="file"]:hover {
-            background-color: #e3f2fd;
-            border-color: #1976D2;
+            background-color: #fff2e6;
+            border-color: #e66300;
         }
 
-        /* --- زر تحميل الـ PDF المحسن --- */
+        /* زر التحميل الأخضر الحيوي */
         .upload-btn { 
             background: linear-gradient(135deg, #00b09b, #96c93d); 
             color: white; 
             border: none; 
-            padding: 20px 40px;
+            padding: 20px;
             border-radius: 50px; 
             cursor: pointer; 
             font-size: 22px; 
@@ -70,9 +81,9 @@
             box-shadow: 0 15px 25px rgba(0, 176, 155, 0.4);
         }
 
-        #status { margin-top: 25px; font-weight: 600; color: #2ecc71; }
+        #status { margin-top: 20px; font-weight: 600; color: #27ae60; }
 
-        /* --- توقيع المطور (ياسر الخطيب) - من ملفك الأصلي --- */
+        /* --- توقيع المطور (ياسر الخطيب) من الملف المرفق مسبقاً --- */
         .signature-card {
             position: fixed;
             bottom: 20px;
@@ -94,10 +105,7 @@
             display: inline-block;
         }
 
-        .signature-card:hover { 
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-        }
+        .signature-card:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,0,0,0.4); }
 
         @keyframes float { 
             0% { transform: translateY(0px); } 
@@ -109,18 +117,20 @@
         .signature-card .title { font-size: 0.7rem; opacity: 0.9; }
 
         @media (max-width: 768px) { 
-            .signature-card { position: relative; bottom: auto; left: auto; margin: 20px auto; animation: none; }
+            .signature-card { position: relative; bottom: auto; left: auto; margin: 20px auto; display: block; width: fit-content; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="Logo" class="logo-img">
+    
     <h2>محول الصور إلى PDF</h2>
     
-    <input type="file" id="imageInput" accept="image/*" multiple>
+    <input type="file" id="imageInput" accept="image/*" multiple title="اختر الصور">
     
-    <button class="upload-btn" onclick="generatePDF()">إنشاء وتحميل PDF</button>
+    <button class="upload-btn" onclick="generatePDF()">إنشاء وتحميل ملف PDF</button>
     
     <p id="status"></p>
 </div>
@@ -141,7 +151,7 @@
             return;
         }
 
-        status.innerText = "جاري معالجة الملفات وتقليل الحجم...";
+        status.innerText = "جاري المعالجة والضغط...";
         const pdf = new jsPDF();
 
         for (let i = 0; i < input.files.length; i++) {
@@ -154,11 +164,11 @@
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-            // استخدام خاصية FAST لتقليل حجم الـ PDF النهائي
+            // استخدام معامل FAST للحصول على ملف صغير الحجم
             pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         }
 
-        pdf.save("YSR_Jpg2Pdf.pdf");
+        pdf.save("YSR_jpg2pdf.pdf");
         status.innerText = "تم التحميل بنجاح!";
     }
 
