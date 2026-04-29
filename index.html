@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>محول الصور الذكي - ياسر الخطيب</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* تنسيق الخلفية العامة للبرنامج */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #2c3e50, #4ca1af); /* ألوان خلفية احترافية */
+            color: #333;
+        }
+
+        .container { 
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            text-align: center;
+            width: 400px;
+        }
+
+        h2 { margin-bottom: 20px; color: #2c3e50; }
+        input[type="file"] { margin: 20px 0; width: 100%; }
+        
+        button { 
+            background-color: #ff6e00; 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #e66300; transform: scale(1.05); }
+
+        /* --- تنسيق التوقيع المأخوذ من ملفك بدقة --- */
+        .signature-card {
+            position: fixed; 
+            bottom: 20px; 
+            left: 20px; 
+            background: linear-gradient(135deg, #FF6E00, #2196F3); 
+            color: white; 
+            padding: 10.5px 17.5px; 
+            border-radius: 8.5px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; [cite: 3]
+            font-size: 0.8rem; [cite: 3]
+            font-weight: 600; [cite: 3]
+            z-index: 1000; [cite: 3]
+            animation: float 6s ease-in-out infinite; [cite: 3]
+            transition: all 0.3s ease; [cite: 4]
+            cursor: pointer; [cite: 4]
+            border: 2px solid rgba(255,255,255,0.2); [cite: 4]
+            text-decoration: none; [cite: 4]
+            display: inline-block; [cite: 7]
+        }
+
+        .signature-card:hover { 
+            transform: scale(1.05); [cite: 8]
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4); [cite: 8]
+        }
+
+        @keyframes float { 
+            0% { transform: translateY(0px); } [cite: 9]
+            50% { transform: translateY(-15px); } [cite: 9]
+            100% { transform: translateY(0px); } [cite: 9]
+        }
+
+        .signature-card .name { 
+            font-size: 0.95rem; [cite: 14]
+            font-weight: 700; [cite: 14]
+            margin-bottom: 5px; [cite: 14]
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3); [cite: 14]
+        }
+
+        .signature-card .title { 
+            font-size: 0.7rem; [cite: 15]
+            opacity: 0.9; [cite: 15]
+            font-weight: 500; [cite: 15]
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>محول الصور إلى PDF</h2>
+    <p>اختر الصور ليتم دمجها في ملف واحد مضغوط</p>
+    <input type="file" id="imageInput" accept="image/*" multiple>
+    <br>
+    <button onclick="generatePDF()">تحويل وتحميل PDF</button>
+    <p id="status" style="margin-top:15px;"></p>
+</div>
+
+<a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank" rel="noopener noreferrer">
+    <div class="name">Yasser Elkhateeb</div> 
+    <div class="title">مطور البرنامج 67011143</div>
+</a>
+
+<script>
+    async function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const input = document.getElementById('imageInput');
+        const status = document.getElementById('status');
+        
+        if (input.files.length === 0) {
+            alert("يرجى اختيار صور أولاً");
+            return;
+        }
+
+        status.innerText = "جاري المعالجة والضغط...";
+        const pdf = new jsPDF();
+
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const imageData = await readFileAsDataURL(file);
+            
+            if (i > 0) pdf.addPage();
+
+            const imgProps = pdf.getImageProperties(imageData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // لتقليل الحجم: نستخدم صيغة JPEG مع إضافة معامل الضغط 'FAST'
+            pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+        }
+
+        pdf.save("yasser_document.pdf");
+        status.innerText = "تم التحميل بنجاح!";
+    }
+
+    function readFileAsDataURL(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
+</body>
+</html>
