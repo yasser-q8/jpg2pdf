@@ -2,184 +2,158 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>محول الصور لـ PDF - ياسر الخطيب</title>
+    <title>محول ياسر الذكي - الشامل</title>
     <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg">
+    <!-- مكتبات المعالجة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
-        /* تنسيق الخلفية بألوان هادئة ومتناسقة مع الشعار */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 40px 0;
+            display: flex; flex-direction: column; align-items: center;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #d6e0f0 100%); 
-            color: #333;
         }
 
         .container { 
-            background: rgba(255, 255, 255, 1); 
-            padding: 40px; 
-            border-radius: 30px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08); 
-            text-align: center;
-            width: 480px;
-            position: relative;
+            background: white; padding: 40px; border-radius: 25px; 
+            box-shadow: 0 15px 45px rgba(0,0,0,0.05); text-align: center;
+            width: 550px; margin-bottom: 30px; border: 1px solid #eee;
         }
 
-        /* تنسيق الشعار المرفق داخل الحاوية  */
-        .logo-img {
-            width: 120px;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        /* قسم تحويل PDF إلى صور (ألوان مختلفة) */
+        .reverse-container {
+            border-top: 5px solid #e74c3c; /* لون أحمر لتمييز العكس */
+            background: #fffafa;
         }
 
-        h2 { margin-bottom: 30px; color: #2c3e50; font-size: 1.6rem; }
+        .logo-img { width: 100px; border-radius: 50%; margin-bottom: 15px; }
+        h2 { color: #2c3e50; margin-bottom: 25px; }
 
-        /* زر اختيار الملفات المكبر والملون */
+        /* تلوين زر Choose Files بالأزرق وتكبيره 50% إضافية */
         input[type="file"] {
-            display: block;
-            width: 100%;
-            padding: 30px; 
-            margin-bottom: 30px;
-            border: 3px dashed #FF6E00; /* لون من وحي التوقيع والشعار */
+            display: block; width: 100%;
+            padding: 45px; /* تكبير الحجم بنسبة 50% عن السابق */
+            margin-bottom: 25px;
+            border: 3px dashed #2196F3; /* اللون الأزرق المطلوب */
             border-radius: 20px;
-            background-color: #fff9f5;
+            background-color: #f0f7ff;
             cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            color: #FF6E00;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
+            font-size: 20px; font-weight: bold; color: #2196F3;
+            box-sizing: border-box; transition: 0.3s;
         }
+        input[type="file"]:hover { background-color: #e3f2fd; }
 
-        input[type="file"]:hover {
-            background-color: #fff2e6;
-            border-color: #e66300;
-        }
-
-        /* زر التحميل الأخضر الحيوي */
-        .upload-btn { 
-            background: linear-gradient(135deg, #00b09b, #96c93d); 
-            color: white; 
-            border: none; 
-            padding: 20px;
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-size: 22px; 
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0, 176, 155, 0.2);
-            width: 100%;
-        }
-
-        .upload-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 15px 25px rgba(0, 176, 155, 0.4);
-        }
-
-        #status { margin-top: 20px; font-weight: 600; color: #27ae60; }
-
-        /* --- توقيع المطور (ياسر الخطيب) من الملف المرفق مسبقاً --- */
-        .signature-card {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #FF6E00, #2196F3);
+        /* أزرار العمليات */
+        .btn { 
+            width: 100%; padding: 18px; border-radius: 50px; border: none;
+            font-size: 20px; font-weight: 800; cursor: pointer; transition: 0.3s;
             color: white;
-            padding: 10.5px 17.5px;
-            border-radius: 8.5px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 1000;
-            animation: float 6s ease-in-out infinite;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
-            text-decoration: none;
-            display: inline-block;
         }
+        .btn-pdf { background: linear-gradient(135deg, #00b09b, #96c93d); }
+        .btn-img { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-        .signature-card:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,0,0,0.4); }
+        #status, #statusReverse { margin-top: 15px; font-weight: bold; color: #555; }
 
-        @keyframes float { 
-            0% { transform: translateY(0px); } 
-            50% { transform: translateY(-15px); } 
-            100% { transform: translateY(0px); } 
+        /* التوقيع الخاص بك */
+        .signature-card {
+            position: fixed; bottom: 20px; left: 20px;
+            background: linear-gradient(135deg, #FF6E00, #2196F3);
+            color: white; padding: 10.5px 17.5px; border-radius: 8.5px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); font-size: 0.8rem;
+            font-weight: 600; z-index: 1000; animation: float 6s ease-in-out infinite;
+            text-decoration: none; display: inline-block;
         }
-
-        .signature-card .name { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; }
-        .signature-card .title { font-size: 0.7rem; opacity: 0.9; }
-
-        @media (max-width: 768px) { 
-            .signature-card { position: relative; bottom: auto; left: auto; margin: 20px auto; display: block; width: fit-content; }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .signature-card .name { font-size: 0.95rem; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="Logo" class="logo-img">
-    
-    <h2>محول الصور إلى PDF</h2>
-    
-    <input type="file" id="imageInput" accept="image/*" multiple title="اختر الصور">
-    
-    <button class="upload-btn" onclick="generatePDF()">إنشاء وتحميل ملف PDF</button>
-    
-    <p id="status"></p>
-</div>
+    <!-- القسم الأول: صور إلى PDF -->
+    <div class="container">
+        <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" class="logo-img" alt="Logo">
+        <h2>تحويل الصور إلى ملف PDF</h2>
+        <input type="file" id="imgInput" accept="image/*" multiple>
+        <button class="btn btn-pdf" onclick="convertToPDF()">إنشاء وتحميل PDF</button>
+        <p id="status"></p>
+    </div>
 
-<a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank" rel="noopener noreferrer">
-    <div class="name">Yasser Elkhateeb</div>
-    <div class="title">مطور البرنامج 67011143</div>
-</a>
+    <!-- القسم الثاني: PDF إلى صور (المربع المنفصل) -->
+    <div class="container reverse-container">
+        <h2 style="color: #e74c3c;">عكس العملية: PDF إلى صور</h2>
+        <p style="color: #666;">اختر ملف PDF لاستخراج الصور منه</p>
+        <input type="file" id="pdfInput" accept="application/pdf" style="border-color: #e74c3c; color: #e74c3c; background: #fff5f5;">
+        <button class="btn btn-img" onclick="convertToImages()">استخراج الصور وتحميلها</button>
+        <div id="imagePreviewContainer"></div>
+        <p id="statusReverse"></p>
+    </div>
+
+    <!-- التوقيع[cite: 1, 2] -->
+    <a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank">
+        <div class="name">Yasser Elkhateeb</div>
+        <div class="title">مطور البرنامج 67011143</div>
+    </a>
 
 <script>
-    async function generatePDF() {
-        const { jsPDF } = window.jspdf;
-        const input = document.getElementById('imageInput');
-        const status = document.getElementById('status');
-        
-        if (input.files.length === 0) {
-            alert("يرجى اختيار الصور أولاً");
-            return;
-        }
+    // إعداد مكتبة PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        status.innerText = "جاري المعالجة والضغط...";
+    // 1. وظيفة تحويل الصور إلى PDF (المحسنة)
+    async function convertToPDF() {
+        const { jsPDF } = window.jspdf;
+        const input = document.getElementById('imgInput');
+        if (input.files.length === 0) return alert("اختر صوراً أولاً");
+
+        document.getElementById('status').innerText = "جاري الإنشاء...";
         const pdf = new jsPDF();
 
         for (let i = 0; i < input.files.length; i++) {
-            const file = input.files[i];
-            const imageData = await readFileAsDataURL(file);
-            
+            const imageData = await readFileAsDataURL(input.files[i]);
             if (i > 0) pdf.addPage();
-
-            const imgProps = pdf.getImageProperties(imageData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            // استخدام معامل FAST للحصول على ملف صغير الحجم
-            pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+            const props = pdf.getImageProperties(imageData);
+            const w = pdf.internal.pageSize.getWidth();
+            const h = (props.height * w) / props.width;
+            pdf.addImage(imageData, 'JPEG', 0, 0, w, h, undefined, 'FAST');
         }
+        pdf.save("Images_to_PDF.pdf");
+        document.getElementById('status').innerText = "تم التحميل!";
+    }
 
-        pdf.save("YSR_jpg2pdf.pdf");
-        status.innerText = "تم التحميل بنجاح!";
+    // 2. وظيفة تحويل PDF إلى صور (العكسية)
+    async function convertToImages() {
+        const input = document.getElementById('pdfInput');
+        if (input.files.length === 0) return alert("اختر ملف PDF أولاً");
+
+        document.getElementById('statusReverse').innerText = "جاري استخراج الصور...";
+        const file = input.files[0];
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 2 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            
+            // تحميل الصورة الناتجة
+            const link = document.createElement('a');
+            link.download = `Page_${i}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        document.getElementById('statusReverse').innerText = "تم استخراج جميع الصفحات!";
     }
 
     function readFileAsDataURL(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.readAsDataURL(file);
-        });
+        return new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result); rd.readAsDataURL(file); });
     }
 </script>
-
 </body>
 </html>
