@@ -2,158 +2,678 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>محول الصور الى pdf</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معالج PDF المتكامل – 4 خدمات</title>
     <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg">
-    <!-- مكتبات المعالجة -->
+    <!-- المكتبات المطلوبة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; padding: 40px 0;
-            display: flex; flex-direction: column; align-items: center;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        /* ---- الخلفية المتحركة ---- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e3f2fd;
+            overflow-x: hidden;
             min-height: 100vh;
+            position: relative;
+        }
+        .bg-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            background: rgba(33, 150, 243, 0.15);
+            border-radius: 50%;
+            animation: move 25s infinite linear;
+        }
+        @keyframes move {
+            from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.6; }
+            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        .container { 
-            background: white; padding: 40px; border-radius: 25px; 
-            box-shadow: 0 15px 45px rgba(0,0,0,0.05); text-align: center;
-            width: 550px; margin-bottom: 30px; border: 1px solid #eee;
+        /* ---- الحاوية الرئيسية ---- */
+        .main-container {
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 30px 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.6);
+            margin-bottom: 80px;
         }
 
-        /* قسم تحويل PDF إلى صور (ألوان مختلفة) */
-        .reverse-container {
-            border-top: 5px solid #e74c3c; /* لون أحمر لتمييز العكس */
-            background: #fffafa;
+        /* ---- الرأس (شعار + عنوان) ---- */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        .logo {
+            width: 100px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        h1 {
+            color: #0d47a1;
+            margin: 10px 0 5px;
+            font-size: 2.2rem;
+        }
+        .subtitle {
+            color: #555;
+            font-size: 1.1rem;
         }
 
-        .logo-img { width: 100px; border-radius: 50%; margin-bottom: 15px; }
-        h2 { color: #2c3e50; margin-bottom: 25px; }
+        /* ---- شبكة الخدمات (عمودان ثابتان) ---- */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
 
-        /* تلوين زر Choose Files بالأزرق وتكبيره 50% إضافية */
-        input[type="file"] {
-            display: block; width: 100%;
-            padding: 45px; /* تكبير الحجم بنسبة 50% عن السابق */
-            margin-bottom: 25px;
-            border: 3px dashed #2196F3; /* اللون الأزرق المطلوب */
+        .service-card {
+            background: rgba(255, 255, 255, 0.7);
             border-radius: 20px;
-            background-color: #f0f7ff;
-            cursor: pointer;
-            font-size: 20px; font-weight: bold; color: #2196F3;
-            box-sizing: border-box; transition: 0.3s;
+            padding: 22px 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 6px solid #1976d2;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
-        input[type="file"]:hover { background-color: #e3f2fd; }
+        .service-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+        .service-card h2 {
+            color: #0d47a1;
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .service-card h2 i { font-style: normal; }
 
-        /* أزرار العمليات */
-        .btn { 
-            width: 100%; padding: 18px; border-radius: 50px; border: none;
-            font-size: 20px; font-weight: 800; cursor: pointer; transition: 0.3s;
+        /* وصف الخدمة */
+        .service-desc {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            padding-right: 4px;
+            border-right: 3px solid #2196F3;
+            padding-right: 10px;
+            line-height: 1.4;
+        }
+
+        /* تلوين مميز لكل خدمة */
+        .card-pdf { border-top-color: #00b09b; }
+        .card-img { border-top-color: #e74c3c; }
+        .card-delete { border-top-color: #f44336; }
+        .card-compress { border-top-color: #f57c00; }
+
+        .card-pdf h2 { color: #00897b; }
+        .card-img h2 { color: #c62828; }
+        .card-delete h2 { color: #c62828; }
+        .card-compress h2 { color: #e65100; }
+
+        /* ---- عناصر التحكم المشتركة ---- */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .controls input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 30px 10px;
+            border: 3px dashed #2196F3;
+            border-radius: 16px;
+            background: #f0f7ff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2196F3;
+            box-sizing: border-box;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .controls input[type="file"]:hover {
+            background: #e3f2fd;
+        }
+        .controls input[type="file"].red-border {
+            border-color: #e74c3c;
+            color: #e74c3c;
+            background: #fff5f5;
+        }
+        .controls input[type="file"].red-border:hover {
+            background: #ffebee;
+        }
+        .controls select {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background: white;
+        }
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
             color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
         .btn-pdf { background: linear-gradient(135deg, #00b09b, #96c93d); }
         .btn-img { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        .btn-delete { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .btn-compress { background: linear-gradient(135deg, #f57c00, #e65100); }
+        .btn-save { background: #388e3c; }
 
-        #status, #statusReverse { margin-top: 15px; font-weight: bold; color: #555; }
-
-        /* التوقيع الخاص بك */
-        .signature-card {
-            position: fixed; bottom: 20px; left: 20px;
-            background: linear-gradient(135deg, #FF6E00, #2196F3);
-            color: white; padding: 10.5px 17.5px; border-radius: 8.5px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3); font-size: 0.8rem;
-            font-weight: 600; z-index: 1000; animation: float 6s ease-in-out infinite;
-            text-decoration: none; display: inline-block;
+        /* ---- حالة الخدمة ---- */
+        .status {
+            margin-top: 12px;
+            font-weight: 600;
+            color: #1565c0;
+            font-size: 0.95rem;
+            min-height: 1.5rem;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .signature-card .name { font-size: 0.95rem; font-weight: 700; }
+
+        /* ---- معاينة الصفحات (خاصة بالحذف) ---- */
+        #pages-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        .page-item {
+            border: 3px solid #fff;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            transition: 0.3s;
+            text-align: center;
+            position: relative;
+        }
+        .page-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        .page-item.selected {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        .page-item.selected::after {
+            content: "✕";
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: #f44336;
+            color: white;
+            padding: 0 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .page-item canvas {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .page-item .page-label {
+            margin-top: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #333;
+        }
+
+        /* ---- شريط التقدم للضغط ---- */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+            display: none;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f57c00, #ffb74d);
+            transition: width 0.3s;
+        }
+
+        /* ============================================================
+           توقيع المطور - تم تعديله حسب الطلب
+           (بدون ألوان، فقط إطار أحمر + تحليق)
+           ============================================================ */
+        .signature-card {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: transparent;      /* إزالة التدرج اللوني */
+            color: #222;                 /* لون النص داكن */
+            padding: 10.5px 17.5px;
+            border-radius: 8.5px;
+            border: 2px solid #e74c3c;   /* إطار أحمر */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* ظل بسيط محايد */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 1000;
+            animation: float 6s ease-in-out infinite; /* تأثير التحليق */
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: left;
+            direction: ltr;
+        }
+        /* إزالة تأثير التوهج (المستعار) نهائياً */
+        .signature-card::before {
+            display: none;
+        }
+        .signature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        .signature-card .name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .signature-card .title {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        /* ---- استجابة للشاشات الصغيرة ---- */
+        @media (max-width: 768px) {
+            .signature-card {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin: 30px auto 0;
+                width: fit-content;
+                animation: none; /* إيقاف التحليق على الموبايل */
+            }
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- القسم الأول: صور إلى PDF -->
-    <div class="container">
-        <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" class="logo-img" alt="Logo">
-        <h2>تحويل الصور إلى ملف PDF</h2>
-        <input type="file" id="imgInput" accept="image/*" multiple>
-        <button class="btn btn-pdf" onclick="convertToPDF()">إنشاء وتحميل PDF</button>
-        <p id="status"></p>
+    <!-- الخلفية المتحركة -->
+    <div class="bg-shapes" id="bg-shapes"></div>
+
+    <!-- الحاوية الرئيسية -->
+    <div class="main-container">
+
+        <!-- الرأس -->
+        <div class="header">
+            <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="شعار YASR" class="logo">
+            <h1>📄 معالج PDF المتكامل</h1>
+            <p class="subtitle">أربع خدمات احترافية في أداة واحدة: تحويل، استخراج، حذف، ضغط</p>
+        </div>
+
+        <!-- شبكة الخدمات (عمودان) -->
+        <div class="services-grid">
+
+            <!-- 1. تحويل الصور إلى PDF -->
+            <div class="service-card card-pdf">
+                <h2><i>🖼️</i> تحويل الصور إلى PDF</h2>
+                <p class="service-desc">اختر مجموعة من الصور (JPG, PNG) ودمجها في ملف PDF واحد مرتب.</p>
+                <div class="controls">
+                    <input type="file" id="imgInput" accept="image/*" multiple>
+                    <button class="btn btn-pdf" onclick="convertToPDF()">إنشاء وتحميل PDF</button>
+                    <div id="status-pdf" class="status">اختر صوراً</div>
+                </div>
+            </div>
+
+            <!-- 2. استخراج الصور من PDF -->
+            <div class="service-card card-img">
+                <h2><i>📄</i> استخراج الصور من PDF</h2>
+                <p class="service-desc">قم بفك ضغط ملف PDF وتحويل كل صفحة إلى صورة منفصلة بصيغة PNG.</p>
+                <div class="controls">
+                    <input type="file" id="pdfInput" accept="application/pdf" class="red-border">
+                    <button class="btn btn-img" onclick="convertToImages()">استخراج الصور</button>
+                    <div id="status-img" class="status">اختر ملف PDF</div>
+                </div>
+            </div>
+
+            <!-- 3. حذف صفحات معينة -->
+            <div class="service-card card-delete">
+                <h2><i>🗑️</i> حذف صفحات معينة</h2>
+                <p class="service-desc">شاهد معاينة لصفحات الملف، واختر الصفحات التي تريد حذفها، ثم احفظ الملف الناتج.</p>
+                <div class="controls">
+                    <input type="file" id="fileDelete" accept="application/pdf" class="red-border">
+                    <button id="saveDeleteBtn" class="btn btn-delete" disabled>حفظ الملف المعدل</button>
+                    <div id="status-delete" class="status">اختر ملفاً</div>
+                    <div id="pages-container"></div>
+                </div>
+            </div>
+
+            <!-- 4. ضغط حجم ملف PDF -->
+            <div class="service-card card-compress">
+                <h2><i>📦</i> ضغط حجم ملف PDF</h2>
+                <p class="service-desc">قلل حجم ملف PDF عن طريق ضغط جودة الصور الداخلية، مع اختيار نسبة الضغط المناسبة.</p>
+                <div class="controls">
+                    <input type="file" id="fileCompress" accept="application/pdf" class="red-border">
+                    <select id="compressionLevel">
+                        <option value="0.9">خفيف (10%)</option>
+                        <option value="0.7">متوسط (30%)</option>
+                        <option value="0.5" selected>قوي (50%)</option>
+                        <option value="0.25">عالي (75%)</option>
+                        <option value="0.05">شديد (95%)</option>
+                        <option value="0.01">فائق (99%)</option>
+                    </select>
+                    <button id="compressBtn" class="btn btn-compress" disabled>ابدأ الضغط</button>
+                    <div class="progress-bar" id="progressBarCompress"><div class="progress" id="progressCompress"></div></div>
+                    <div id="status-compress" class="status">اختر ملفاً</div>
+                </div>
+            </div>
+
+        </div> <!-- نهاية الشبكة -->
     </div>
 
-    <!-- القسم الثاني: PDF إلى صور (المربع المنفصل) -->
-    <div class="container reverse-container">
-        <h2 style="color: #e74c3c;">عكس العملية: PDF إلى صور</h2>
-        <p style="color: #666;">اختر ملف PDF لاستخراج الصور منه</p>
-        <input type="file" id="pdfInput" accept="application/pdf" style="border-color: #e74c3c; color: #e74c3c; background: #fff5f5;">
-        <button class="btn btn-img" onclick="convertToImages()">استخراج الصور وتحميلها</button>
-        <div id="imagePreviewContainer"></div>
-        <p id="statusReverse"></p>
-    </div>
-
-    <!-- التوقيع[cite: 1, 2] -->
-    <a href="https://yasser-q8.github.io/myprofile/#" class="signature-card" target="_blank">
+    <!-- التوقيع المعدل (بدون ألوان، إطار أحمر) -->
+    <div class="signature-card">
         <div class="name">Yasser Elkhateeb</div>
         <div class="title">مطور البرنامج 67011143</div>
-    </a>
+    </div>
 
-<script>
-    // إعداد مكتبة PDF.js
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    <script>
+        // ---- إنشاء الخلفية المتحركة ----
+        (function() {
+            const bg = document.getElementById('bg-shapes');
+            for (let i=0; i<25; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                const size = Math.random() * 80 + 30 + 'px';
+                shape.style.width = size;
+                shape.style.height = size;
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.animationDelay = Math.random() * 20 + 's';
+                shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                bg.appendChild(shape);
+            }
+        })();
 
-    // 1. وظيفة تحويل الصور إلى PDF (المحسنة)
-    async function convertToPDF() {
-        const { jsPDF } = window.jspdf;
-        const input = document.getElementById('imgInput');
-        if (input.files.length === 0) return alert("اختر صوراً أولاً");
+        // ---- تهيئة PDF.js ----
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-        document.getElementById('status').innerText = "جاري الإنشاء...";
-        const pdf = new jsPDF();
+        // ============================================================
+        // 1. خدمة تحويل الصور إلى PDF
+        // ============================================================
+        async function convertToPDF() {
+            const { jsPDF } = window.jspdf;
+            const input = document.getElementById('imgInput');
+            const status = document.getElementById('status-pdf');
+            if (input.files.length === 0) { alert('اختر صوراً أولاً'); return; }
 
-        for (let i = 0; i < input.files.length; i++) {
-            const imageData = await readFileAsDataURL(input.files[i]);
-            if (i > 0) pdf.addPage();
-            const props = pdf.getImageProperties(imageData);
-            const w = pdf.internal.pageSize.getWidth();
-            const h = (props.height * w) / props.width;
-            pdf.addImage(imageData, 'JPEG', 0, 0, w, h, undefined, 'FAST');
+            status.innerText = 'جاري الإنشاء...';
+            const pdf = new jsPDF();
+            for (let i = 0; i < input.files.length; i++) {
+                const data = await readFileAsDataURL(input.files[i]);
+                if (i > 0) pdf.addPage();
+                const props = pdf.getImageProperties(data);
+                const w = pdf.internal.pageSize.getWidth();
+                const h = (props.height * w) / props.width;
+                pdf.addImage(data, 'JPEG', 0, 0, w, h, undefined, 'FAST');
+            }
+            pdf.save('Images_to_PDF.pdf');
+            status.innerText = '✅ تم التحميل!';
         }
-        pdf.save("Images_to_PDF.pdf");
-        document.getElementById('status').innerText = "تم التحميل!";
-    }
 
-    // 2. وظيفة تحويل PDF إلى صور (العكسية)
-    async function convertToImages() {
-        const input = document.getElementById('pdfInput');
-        if (input.files.length === 0) return alert("اختر ملف PDF أولاً");
-
-        document.getElementById('statusReverse').innerText = "جاري استخراج الصور...";
-        const file = input.files[0];
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const viewport = page.getViewport({ scale: 2 });
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-            
-            // تحميل الصورة الناتجة
-            const link = document.createElement('a');
-            link.download = `Page_${i}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+        function readFileAsDataURL(file) {
+            return new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result); rd.readAsDataURL(file); });
         }
-        document.getElementById('statusReverse').innerText = "تم استخراج جميع الصفحات!";
-    }
 
-    function readFileAsDataURL(file) {
-        return new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result); rd.readAsDataURL(file); });
-    }
-</script>
+        // ============================================================
+        // 2. خدمة استخراج الصور من PDF
+        // ============================================================
+        async function convertToImages() {
+            const input = document.getElementById('pdfInput');
+            const status = document.getElementById('status-img');
+            if (input.files.length === 0) { alert('اختر ملف PDF أولاً'); return; }
+
+            status.innerText = 'جاري استخراج الصور...';
+            const file = input.files[0];
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 2 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                await page.render({ canvasContext: context, viewport }).promise;
+                const link = document.createElement('a');
+                link.download = `Page_${i}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+            status.innerText = '✅ تم استخراج جميع الصفحات!';
+        }
+
+        // ============================================================
+        // 3. خدمة حذف صفحات معينة
+        // ============================================================
+        const fileDelete = document.getElementById('fileDelete');
+        const pagesContainer = document.getElementById('pages-container');
+        const saveDeleteBtn = document.getElementById('saveDeleteBtn');
+        const statusDelete = document.getElementById('status-delete');
+
+        let pdfDocDelete = null;
+        let selectedPages = new Set();
+        let originalFileNameDelete = '';
+
+        fileDelete.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            originalFileNameDelete = file.name;
+            pagesContainer.innerHTML = '';
+            selectedPages.clear();
+            saveDeleteBtn.disabled = true;
+            statusDelete.innerText = 'جاري تحميل الملف...';
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                pdfDocDelete = await loadingTask.promise;
+                const totalPages = pdfDocDelete.numPages;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const page = await pdfDocDelete.getPage(i);
+                    const viewport = page.getViewport({ scale: 0.4 });
+                    const div = document.createElement('div');
+                    div.className = 'page-item';
+                    div.dataset.pageIndex = i - 1;
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+
+                    div.appendChild(canvas);
+                    const label = document.createElement('div');
+                    label.className = 'page-label';
+                    label.innerText = 'صفحة ' + i;
+                    div.appendChild(label);
+
+                    div.onclick = () => {
+                        const idx = parseInt(div.dataset.pageIndex);
+                        if (selectedPages.has(idx)) {
+                            selectedPages.delete(idx);
+                            div.classList.remove('selected');
+                        } else {
+                            selectedPages.add(idx);
+                            div.classList.add('selected');
+                        }
+                        saveDeleteBtn.disabled = (selectedPages.size === 0);
+                    };
+                    pagesContainer.appendChild(div);
+                }
+                statusDelete.innerText = `✅ ${totalPages} صفحة – اختر للحذف`;
+            } catch (err) {
+                statusDelete.innerText = '❌ خطأ في تحميل الملف';
+                console.error(err);
+            }
+        });
+
+        saveDeleteBtn.addEventListener('click', async () => {
+            if (!fileDelete.files[0]) return;
+            statusDelete.innerText = 'جاري المعالجة...';
+            try {
+                const arrayBuffer = await fileDelete.files[0].arrayBuffer();
+                const pdfLibDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                const pagesToRemove = Array.from(selectedPages).sort((a, b) => b - a);
+                pagesToRemove.forEach(idx => pdfLibDoc.removePage(idx));
+                const pdfBytes = await pdfLibDoc.save();
+
+                if ('showSaveFilePicker' in window) {
+                    try {
+                        const handle = await window.showSaveFilePicker({
+                            suggestedName: 'معدل_' + originalFileNameDelete,
+                            types: [{ description: 'PDF', accept: { 'application/pdf': ['.pdf'] } }]
+                        });
+                        const writable = await handle.createWritable();
+                        await writable.write(pdfBytes);
+                        await writable.close();
+                        statusDelete.innerText = '✅ تم الحفظ في المجلد المختار';
+                    } catch { statusDelete.innerText = '⚠️ تم إلغاء الحفظ'; }
+                } else {
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'معدل_' + originalFileNameDelete;
+                    link.click();
+                    statusDelete.innerText = '✅ تم التحميل (مجلد التنزيلات)';
+                }
+            } catch (err) {
+                statusDelete.innerText = '❌ حدث خطأ';
+                console.error(err);
+            }
+        });
+
+        // ============================================================
+        // 4. خدمة ضغط حجم ملف PDF
+        // ============================================================
+        const fileCompress = document.getElementById('fileCompress');
+        const compressBtn = document.getElementById('compressBtn');
+        const statusCompress = document.getElementById('status-compress');
+        const progressCompress = document.getElementById('progressCompress');
+        const progressBarCompress = document.getElementById('progressBarCompress');
+        const compressionLevel = document.getElementById('compressionLevel');
+
+        let selectedCompressFile = null;
+
+        fileCompress.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedCompressFile = file;
+                compressBtn.disabled = false;
+                statusCompress.innerText = '✅ ' + file.name;
+            } else {
+                selectedCompressFile = null;
+                compressBtn.disabled = true;
+                statusCompress.innerText = 'اختر ملفاً';
+            }
+        });
+
+        compressBtn.addEventListener('click', async () => {
+            if (!selectedCompressFile) { alert('اختر ملف PDF أولاً'); return; }
+            const compression = parseFloat(compressionLevel.value);
+            statusCompress.innerText = '⏳ جاري الضغط...';
+            progressBarCompress.style.display = 'block';
+            progressCompress.style.width = '0%';
+            compressBtn.disabled = true;
+
+            try {
+                const arrayBuffer = await selectedCompressFile.arrayBuffer();
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                const pdf = await loadingTask.promise;
+                const pdfDoc = await PDFLib.PDFDocument.create();
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+
+                    const imgData = canvas.toDataURL('image/jpeg', compression);
+                    const imgBytes = await fetch(imgData).then(res => res.arrayBuffer());
+                    const img = await pdfDoc.embedJpg(imgBytes);
+                    const newPage = pdfDoc.addPage([viewport.width, viewport.height]);
+                    newPage.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+
+                    progressCompress.style.width = `${(i / pdf.numPages) * 100}%`;
+                }
+
+                const compressedBytes = await pdfDoc.save();
+                const blob = new Blob([compressedBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `compressed_${selectedCompressFile.name}`;
+                link.click();
+
+                statusCompress.innerText = '✅ تم الضغط بنجاح!';
+                progressCompress.style.width = '100%';
+            } catch (err) {
+                statusCompress.innerText = '❌ خطأ أثناء الضغط';
+                console.error(err);
+            } finally {
+                compressBtn.disabled = false;
+                setTimeout(() => {
+                    progressBarCompress.style.display = 'none';
+                    progressCompress.style.width = '0%';
+                }, 3000);
+            }
+        });
+    </script>
 </body>
 </html>
