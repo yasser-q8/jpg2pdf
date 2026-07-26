@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معالج PDF المتكامل – 4 خدمات</title>
+    <title>معالج PDF المتكامل – 6 خدمات</title>
     <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg">
     <!-- المكتبات المطلوبة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -121,11 +121,15 @@
         .card-img { border-top-color: #e74c3c; }
         .card-delete { border-top-color: #f44336; }
         .card-compress { border-top-color: #f57c00; }
+        .card-addpage { border-top-color: #2e7d32; }
+        .card-merge { border-top-color: #6a1b9a; }
 
         .card-pdf h2 { color: #00897b; }
         .card-img h2 { color: #c62828; }
         .card-delete h2 { color: #c62828; }
         .card-compress h2 { color: #e65100; }
+        .card-addpage h2 { color: #2e7d32; }
+        .card-merge h2 { color: #6a1b9a; }
 
         /* ---- عناصر التحكم المشتركة ---- */
         .controls {
@@ -161,6 +165,22 @@
         .controls input[type="file"].red-border:hover {
             background: #ffebee;
         }
+        .controls input[type="file"].green-border {
+            border-color: #2e7d32;
+            color: #2e7d32;
+            background: #f1f8e9;
+        }
+        .controls input[type="file"].green-border:hover {
+            background: #dcedc8;
+        }
+        .controls input[type="file"].purple-border {
+            border-color: #6a1b9a;
+            color: #6a1b9a;
+            background: #f3e5f5;
+        }
+        .controls input[type="file"].purple-border:hover {
+            background: #e1bee7;
+        }
         .controls select {
             padding: 12px;
             border-radius: 12px;
@@ -192,6 +212,8 @@
         .btn-img { background: linear-gradient(135deg, #e74c3c, #c0392b); }
         .btn-delete { background: linear-gradient(135deg, #e74c3c, #c0392b); }
         .btn-compress { background: linear-gradient(135deg, #f57c00, #e65100); }
+        .btn-addpage { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
+        .btn-merge { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
         .btn-save { background: #388e3c; }
 
         /* ---- حالة الخدمة ---- */
@@ -280,23 +302,22 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: transparent;      /* إزالة التدرج اللوني */
-            color: #222;                 /* لون النص داكن */
+            background: transparent;
+            color: #222;
             padding: 10.5px 17.5px;
             border-radius: 8.5px;
-            border: 2px solid #e74c3c;   /* إطار أحمر */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* ظل بسيط محايد */
+            border: 2px solid #e74c3c;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 0.8rem;
             font-weight: 600;
             z-index: 1000;
-            animation: float 6s ease-in-out infinite; /* تأثير التحليق */
+            animation: float 6s ease-in-out infinite;
             transition: all 0.3s ease;
             cursor: pointer;
             text-align: left;
             direction: ltr;
         }
-        /* إزالة تأثير التوهج (المستعار) نهائياً */
         .signature-card::before {
             display: none;
         }
@@ -326,7 +347,7 @@
                 left: auto;
                 margin: 30px auto 0;
                 width: fit-content;
-                animation: none; /* إيقاف التحليق على الموبايل */
+                animation: none;
             }
             .services-grid {
                 grid-template-columns: 1fr;
@@ -351,7 +372,7 @@
         <div class="header">
             <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="شعار YASR" class="logo">
             <h1>📄 معالج PDF المتكامل</h1>
-            <p class="subtitle">أربع خدمات احترافية في أداة واحدة: تحويل، استخراج، حذف، ضغط</p>
+            <p class="subtitle">ست خدمات احترافية في أداة واحدة: تحويل، استخراج، حذف، ضغط، إضافة، دمج</p>
         </div>
 
         <!-- شبكة الخدمات (عمودان) -->
@@ -408,6 +429,29 @@
                     <button id="compressBtn" class="btn btn-compress" disabled>ابدأ الضغط</button>
                     <div class="progress-bar" id="progressBarCompress"><div class="progress" id="progressCompress"></div></div>
                     <div id="status-compress" class="status">اختر ملفاً</div>
+                </div>
+            </div>
+
+            <!-- 5. إضافة صفحة (صورة) إلى ملف PDF -->
+            <div class="service-card card-addpage">
+                <h2><i>➕</i> إضافة صفحة (صورة) إلى PDF</h2>
+                <p class="service-desc">اختر ملف PDF ثم صورة (JPG/PNG) لإدراجها كصفحة جديدة في نهاية الملف.</p>
+                <div class="controls">
+                    <input type="file" id="fileAddPage" accept="application/pdf" class="green-border">
+                    <input type="file" id="imageAddPage" accept="image/*" class="green-border">
+                    <button id="addPageBtn" class="btn btn-addpage" disabled>إدراج الصورة كصفحة</button>
+                    <div id="status-addpage" class="status">اختر ملف PDF وصورة</div>
+                </div>
+            </div>
+
+            <!-- 6. دمج ملفات PDF -->
+            <div class="service-card card-merge">
+                <h2><i>📑</i> دمج ملفات PDF</h2>
+                <p class="service-desc">اختر ملفين أو أكثر من PDF لدمجهم في ملف واحد بالترتيب الذي تختاره.</p>
+                <div class="controls">
+                    <input type="file" id="fileMerge" accept="application/pdf" multiple class="purple-border">
+                    <button id="mergeBtn" class="btn btn-merge" disabled>دمج الملفات</button>
+                    <div id="status-merge" class="status">اختر ملفين على الأقل</div>
                 </div>
             </div>
 
@@ -672,6 +716,158 @@
                     progressBarCompress.style.display = 'none';
                     progressCompress.style.width = '0%';
                 }, 3000);
+            }
+        });
+
+        // ============================================================
+        // 5. خدمة إضافة صفحة (صورة) إلى ملف PDF
+        // ============================================================
+        const fileAddPage = document.getElementById('fileAddPage');
+        const imageAddPage = document.getElementById('imageAddPage');
+        const addPageBtn = document.getElementById('addPageBtn');
+        const statusAddPage = document.getElementById('status-addpage');
+
+        let addPageFile = null;
+        let addPageImage = null;
+
+        fileAddPage.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                addPageFile = e.target.files[0];
+            } else {
+                addPageFile = null;
+            }
+            updateAddPageBtn();
+        });
+
+        imageAddPage.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                addPageImage = e.target.files[0];
+            } else {
+                addPageImage = null;
+            }
+            updateAddPageBtn();
+        });
+
+        function updateAddPageBtn() {
+            if (addPageFile && addPageImage) {
+                addPageBtn.disabled = false;
+                statusAddPage.innerText = '✅ جاهز للإدراج';
+            } else {
+                addPageBtn.disabled = true;
+                statusAddPage.innerText = 'اختر ملف PDF وصورة';
+            }
+        }
+
+        addPageBtn.addEventListener('click', async () => {
+            if (!addPageFile || !addPageImage) return;
+            statusAddPage.innerText = '⏳ جاري الإدراج...';
+            addPageBtn.disabled = true;
+
+            try {
+                // قراءة ملف PDF الأصلي
+                const pdfArrayBuffer = await addPageFile.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfArrayBuffer);
+
+                // قراءة الصورة وتحويلها إلى بيانات مناسبة
+                const imageData = await readFileAsDataURL(addPageImage);
+                const imageBytes = await fetch(imageData).then(res => res.arrayBuffer());
+
+                // تحديد نوع الصورة (JPG أو PNG)
+                const mimeType = addPageImage.type;
+                let imageEmbed;
+                if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+                    imageEmbed = await pdfDoc.embedJpg(imageBytes);
+                } else if (mimeType === 'image/png') {
+                    imageEmbed = await pdfDoc.embedPng(imageBytes);
+                } else {
+                    throw new Error('نوع الصورة غير مدعوم، استخدم JPG أو PNG');
+                }
+
+                // إضافة صفحة جديدة بحجم الصورة
+                const { width, height } = imageEmbed;
+                const page = pdfDoc.addPage([width, height]);
+                page.drawImage(imageEmbed, { x: 0, y: 0, width, height });
+
+                // حفظ الملف الناتج
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `مضاف_صفحة_${addPageFile.name}`;
+                link.click();
+
+                statusAddPage.innerText = '✅ تمت الإضافة بنجاح!';
+            } catch (err) {
+                statusAddPage.innerText = '❌ خطأ: ' + err.message;
+                console.error(err);
+            } finally {
+                addPageBtn.disabled = false;
+                // إعادة تعيين الحقول
+                fileAddPage.value = '';
+                imageAddPage.value = '';
+                addPageFile = null;
+                addPageImage = null;
+                updateAddPageBtn();
+            }
+        });
+
+        // ============================================================
+        // 6. خدمة دمج ملفات PDF
+        // ============================================================
+        const fileMerge = document.getElementById('fileMerge');
+        const mergeBtn = document.getElementById('mergeBtn');
+        const statusMerge = document.getElementById('status-merge');
+
+        fileMerge.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length >= 2) {
+                mergeBtn.disabled = false;
+                statusMerge.innerText = `✅ تم اختيار ${files.length} ملف`;
+            } else {
+                mergeBtn.disabled = true;
+                statusMerge.innerText = 'اختر ملفين على الأقل';
+            }
+        });
+
+        mergeBtn.addEventListener('click', async () => {
+            const files = fileMerge.files;
+            if (files.length < 2) {
+                alert('يرجى اختيار ملفين أو أكثر');
+                return;
+            }
+
+            statusMerge.innerText = '⏳ جاري الدمج...';
+            mergeBtn.disabled = true;
+
+            try {
+                const mergedPdf = await PDFLib.PDFDocument.create();
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    const indices = pdf.getPageIndices();
+                    const copiedPages = await mergedPdf.copyPages(pdf, indices);
+                    copiedPages.forEach(page => mergedPdf.addPage(page));
+                }
+
+                const pdfBytes = await mergedPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `merged_${files.length}_files.pdf`;
+                link.click();
+
+                statusMerge.innerText = '✅ تم الدمج بنجاح!';
+            } catch (err) {
+                statusMerge.innerText = '❌ خطأ أثناء الدمج';
+                console.error(err);
+            } finally {
+                mergeBtn.disabled = false;
+                // إعادة تعيين الحقل
+                fileMerge.value = '';
+                statusMerge.innerText = 'اختر ملفين على الأقل';
+                mergeBtn.disabled = true;
             }
         });
     </script>
