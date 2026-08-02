@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>معالج PDF المتكامل – 6 خدمات</title>
-    <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg">
+    <link rel="icon" href="https://i.postimg.cc/3xZmVcrP/YASR.jpg" type="image/jpeg" />
+
     <!-- المكتبات المطلوبة -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js">
+    </script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js">
+    </script>
+
     <style>
-        /* ---- الخلفية المتحركة ---- */
+        /* ---- الخلفية المتحركة (الشعار) ---- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -20,22 +25,37 @@
             min-height: 100vh;
             position: relative;
         }
+
         .bg-shapes {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
             overflow: hidden;
+            pointer-events: none;
         }
+
         .shape {
             position: absolute;
-            background: rgba(33, 150, 243, 0.15);
             border-radius: 50%;
             animation: move 25s infinite linear;
+            /* الخلفية ستُضبط عبر JavaScript */;
         }
+
         @keyframes move {
-            from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.6; }
-            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+            from {
+                transform: translateY(110vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.55;
+            }
+            to {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* ---- الحاوية الرئيسية ---- */
@@ -45,10 +65,12 @@
             background: rgba(255, 255, 255, 0.92);
             padding: 30px 25px;
             border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             margin-bottom: 80px;
+            position: relative;
+            z-index: 1;
         }
 
         /* ---- الرأس (شعار + عنوان) ---- */
@@ -59,7 +81,7 @@
         .logo {
             width: 100px;
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
         h1 {
             color: #0d47a1;
@@ -83,7 +105,7 @@
             background: rgba(255, 255, 255, 0.7);
             border-radius: 20px;
             padding: 22px 18px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             border-top: 6px solid #1976d2;
             transition: all 0.3s ease;
             display: flex;
@@ -91,7 +113,7 @@
         }
         .service-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         }
         .service-card h2 {
             color: #0d47a1;
@@ -102,7 +124,9 @@
             align-items: center;
             gap: 8px;
         }
-        .service-card h2 i { font-style: normal; }
+        .service-card h2 i {
+            font-style: normal;
+        }
 
         /* وصف الخدمة */
         .service-desc {
@@ -117,19 +141,43 @@
         }
 
         /* تلوين مميز لكل خدمة */
-        .card-pdf { border-top-color: #00b09b; }
-        .card-img { border-top-color: #e74c3c; }
-        .card-delete { border-top-color: #f44336; }
-        .card-compress { border-top-color: #f57c00; }
-        .card-addpage { border-top-color: #2e7d32; }
-        .card-merge { border-top-color: #6a1b9a; }
+        .card-pdf {
+            border-top-color: #00b09b;
+        }
+        .card-img {
+            border-top-color: #e74c3c;
+        }
+        .card-delete {
+            border-top-color: #f44336;
+        }
+        .card-compress {
+            border-top-color: #f57c00;
+        }
+        .card-addpage {
+            border-top-color: #2e7d32;
+        }
+        .card-merge {
+            border-top-color: #6a1b9a;
+        }
 
-        .card-pdf h2 { color: #00897b; }
-        .card-img h2 { color: #c62828; }
-        .card-delete h2 { color: #c62828; }
-        .card-compress h2 { color: #e65100; }
-        .card-addpage h2 { color: #2e7d32; }
-        .card-merge h2 { color: #6a1b9a; }
+        .card-pdf h2 {
+            color: #00897b;
+        }
+        .card-img h2 {
+            color: #c62828;
+        }
+        .card-delete h2 {
+            color: #c62828;
+        }
+        .card-compress h2 {
+            color: #e65100;
+        }
+        .card-addpage h2 {
+            color: #2e7d32;
+        }
+        .card-merge h2 {
+            color: #6a1b9a;
+        }
 
         /* ---- عناصر التحكم المشتركة ---- */
         .controls {
@@ -185,9 +233,19 @@
             padding: 12px;
             border-radius: 12px;
             border: 1px solid #ccc;
-            font-size: 16px;
+            font-size: 1.15rem;
+            font-weight: 700;
             background: white;
+            cursor: pointer;
         }
+
+        /* تلوين خيارات الضغط */
+        .controls select option {
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 6px 10px;
+        }
+
         .btn {
             padding: 12px;
             border: none;
@@ -197,7 +255,7 @@
             cursor: pointer;
             transition: 0.3s;
             color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .btn:hover {
             transform: scale(1.02);
@@ -208,13 +266,27 @@
             cursor: not-allowed;
             transform: none;
         }
-        .btn-pdf { background: linear-gradient(135deg, #00b09b, #96c93d); }
-        .btn-img { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .btn-delete { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .btn-compress { background: linear-gradient(135deg, #f57c00, #e65100); }
-        .btn-addpage { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
-        .btn-merge { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
-        .btn-save { background: #388e3c; }
+        .btn-pdf {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+        }
+        .btn-img {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        .btn-compress {
+            background: linear-gradient(135deg, #f57c00, #e65100);
+        }
+        .btn-addpage {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+        }
+        .btn-merge {
+            background: linear-gradient(135deg, #6a1b9a, #ab47bc);
+        }
+        .btn-save {
+            background: #388e3c;
+        }
 
         /* ---- حالة الخدمة ---- */
         .status {
@@ -240,14 +312,14 @@
             cursor: pointer;
             border-radius: 10px;
             background: white;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
             transition: 0.3s;
             text-align: center;
             position: relative;
         }
         .page-item:hover {
             transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
         .page-item.selected {
             border-color: #f44336;
@@ -295,8 +367,7 @@
         }
 
         /* ============================================================
-           توقيع المطور - تم تعديله حسب الطلب
-           (بدون ألوان، فقط إطار أحمر + تحليق)
+           توقيع المطور – مصغر بنسبة 15%
            ============================================================ */
         .signature-card {
             position: fixed;
@@ -304,12 +375,12 @@
             left: 20px;
             background: transparent;
             color: #222;
-            padding: 10.5px 17.5px;
-            border-radius: 8.5px;
-            border: 2px solid #e74c3c;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 9px 15px;
+            border-radius: 8px;
+            border: 1.7px solid #e74c3c;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.68rem;
             font-weight: 600;
             z-index: 1000;
             animation: float 6s ease-in-out infinite;
@@ -323,19 +394,24 @@
         }
         .signature-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
         }
         .signature-card .name {
-            font-size: 0.95rem;
+            font-size: 0.81rem;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .signature-card .title {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             opacity: 0.8;
         }
 
@@ -362,7 +438,7 @@
 </head>
 <body>
 
-    <!-- الخلفية المتحركة -->
+    <!-- الخلفية المتحركة (الشعار) -->
     <div class="bg-shapes" id="bg-shapes"></div>
 
     <!-- الحاوية الرئيسية -->
@@ -370,7 +446,7 @@
 
         <!-- الرأس -->
         <div class="header">
-            <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="شعار YASR" class="logo">
+            <img src="https://i.postimg.cc/3xZmVcrP/YASR.jpg" alt="شعار YASR" class="logo" />
             <h1>📄 معالج PDF المتكامل</h1>
             <p class="subtitle">ست خدمات احترافية في أداة واحدة: تحويل، استخراج، حذف، ضغط، إضافة، دمج</p>
         </div>
@@ -383,7 +459,7 @@
                 <h2><i>🖼️</i> تحويل الصور إلى PDF</h2>
                 <p class="service-desc">اختر مجموعة من الصور (JPG, PNG) ودمجها في ملف PDF واحد مرتب.</p>
                 <div class="controls">
-                    <input type="file" id="imgInput" accept="image/*" multiple>
+                    <input type="file" id="imgInput" accept="image/*" multiple />
                     <button class="btn btn-pdf" onclick="convertToPDF()">إنشاء وتحميل PDF</button>
                     <div id="status-pdf" class="status">اختر صوراً</div>
                 </div>
@@ -391,10 +467,10 @@
 
             <!-- 2. تحويل PDF إلى صور -->
             <div class="service-card card-img">
-                <h2><i>📄</i> تحويل PDF إلى صور </h2>
+                <h2><i>📄</i> تحويل PDF إلى صور</h2>
                 <p class="service-desc">قم بفك ضغط ملف PDF وتحويل كل صفحة إلى صورة منفصلة بصيغة PNG.</p>
                 <div class="controls">
-                    <input type="file" id="pdfInput" accept="application/pdf" class="red-border">
+                    <input type="file" id="pdfInput" accept="application/pdf" class="red-border" />
                     <button class="btn btn-img" onclick="convertToImages()">استخراج الصور</button>
                     <div id="status-img" class="status">اختر ملف PDF</div>
                 </div>
@@ -403,9 +479,9 @@
             <!-- 3. حذف صفحات معينة من ملف PDF -->
             <div class="service-card card-delete">
                 <h2><i>🗑️</i> حذف صفحات معينة من ملف PDF</h2>
-                <p class="service-desc">شاهـد  معاينة لصفحـات الملف،  واختـر الصفحات التـي تريـد حذفهـا،  ثـم احفــظ الملف الناتـج.</p>
+                <p class="service-desc">شاهد معاينة لصفحات الملف، واختر الصفحات التي تريد حذفها، ثم احفظ الملف الناتج.</p>
                 <div class="controls">
-                    <input type="file" id="fileDelete" accept="application/pdf" class="red-border">
+                    <input type="file" id="fileDelete" accept="application/pdf" class="red-border" />
                     <button id="saveDeleteBtn" class="btn btn-delete" disabled>حفظ الملف المعدل</button>
                     <div id="status-delete" class="status">اختر ملفاً</div>
                     <div id="pages-container"></div>
@@ -417,17 +493,19 @@
                 <h2><i>📦</i> ضغط حجم ملف PDF</h2>
                 <p class="service-desc">قلل حجم ملف PDF عن طريق ضغط جودة الصور الداخلية، مع اختيار نسبة الضغط المناسبة.</p>
                 <div class="controls">
-                    <input type="file" id="fileCompress" accept="application/pdf" class="red-border">
+                    <input type="file" id="fileCompress" accept="application/pdf" class="red-border" />
                     <select id="compressionLevel">
-                        <option value="0.9">ضغط خفيف بنسبة (10%) </option>
-                        <option value="0.7">ضغط متوسط بنسبة(30%)</option>
-                        <option value="0.5" selected>ضغط قوي بنسبة (50%)</option>
-                        <option value="0.25">ضغط خفيف بنسبة(75%)</option>
-                        <option value="0.05">ضغط شديد بنسبة (95%)</option>
-                        <option value="0.01">ضغط فائق بنسبة (99%)</option>
+                        <option value="0.9" style="color:#2e7d32;">🟢 ضغط خفيف (10%)</option>
+                        <option value="0.7" style="color:#1976d2;">🔵 ضغط متوسط (30%)</option>
+                        <option value="0.5" style="color:#e65100;" selected>🟠 ضغط قوي (50%)</option>
+                        <option value="0.25" style="color:#6a1b9a;">🟣 ضغط قوي جداً (75%)</option>
+                        <option value="0.05" style="color:#c62828;">🔴 ضغط شديد (95%)</option>
+                        <option value="0.01" style="color:#880e4f;">⏺ ضغط فائق (99%)</option>
                     </select>
                     <button id="compressBtn" class="btn btn-compress" disabled>ابدأ الضغط</button>
-                    <div class="progress-bar" id="progressBarCompress"><div class="progress" id="progressCompress"></div></div>
+                    <div class="progress-bar" id="progressBarCompress">
+                        <div class="progress" id="progressCompress"></div>
+                    </div>
                     <div id="status-compress" class="status">اختر ملفاً</div>
                 </div>
             </div>
@@ -437,8 +515,8 @@
                 <h2><i>➕</i> إضافة صفحة (صورة) إلى PDF</h2>
                 <p class="service-desc">اختر ملف PDF ثم صورة (JPG/PNG) لإدراجها كصفحة جديدة في نهاية الملف.</p>
                 <div class="controls">
-                    <input type="file" id="fileAddPage" accept="application/pdf" class="green-border">
-                    <input type="file" id="imageAddPage" accept="image/*" class="green-border">
+                    <input type="file" id="fileAddPage" accept="application/pdf" class="green-border" />
+                    <input type="file" id="imageAddPage" accept="image/*" class="green-border" />
                     <button id="addPageBtn" class="btn btn-addpage" disabled>إدراج الصورة كصفحة</button>
                     <div id="status-addpage" class="status">اختر ملف PDF وصورة</div>
                 </div>
@@ -449,34 +527,43 @@
                 <h2><i>📑</i> دمج ملفات PDF مع بعض</h2>
                 <p class="service-desc">اختر ملفين أو أكثر من PDF لدمجهم في ملف واحد بالترتيب الذي تختاره.</p>
                 <div class="controls">
-                    <input type="file" id="fileMerge" accept="application/pdf" multiple class="purple-border">
+                    <input type="file" id="fileMerge" accept="application/pdf" multiple class="purple-border" />
                     <button id="mergeBtn" class="btn btn-merge" disabled>دمج الملفات</button>
                     <div id="status-merge" class="status">اختر ملفين على الأقل</div>
                 </div>
             </div>
 
-        </div> <!-- نهاية الشبكة -->
+        </div>
+        <!-- نهاية الشبكة -->
     </div>
 
-    <!-- التوقيع المعدل (بدون ألوان، إطار أحمر) -->
+    <!-- التوقيع المصغر بنسبة 15% -->
     <div class="signature-card">
         <div class="name">Yasser Elkhateeb</div>
         <div class="title">مطور البرنامج 67011143</div>
     </div>
 
     <script>
-        // ---- إنشاء الخلفية المتحركة ----
+        // ---- إنشاء الخلفية المتحركة (الشعار) ----
         (function() {
             const bg = document.getElementById('bg-shapes');
-            for (let i=0; i<25; i++) {
+            const logoUrl = 'https://i.postimg.cc/3xZmVcrP/YASR.jpg';
+
+            for (let i = 0; i < 30; i++) {
                 const shape = document.createElement('div');
                 shape.className = 'shape';
-                const size = Math.random() * 80 + 30 + 'px';
+
+                const size = Math.random() * 70 + 35 + 'px';
                 shape.style.width = size;
                 shape.style.height = size;
                 shape.style.left = Math.random() * 100 + '%';
                 shape.style.animationDelay = Math.random() * 20 + 's';
-                shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                shape.style.animationDuration = (Math.random() * 12 + 16) + 's';
+
+                // استخدام الشعار كخلفية
+                shape.style.background = `url('${logoUrl}') no-repeat center / cover`;
+                shape.style.opacity = 0.2 + Math.random() * 0.25;
+
                 bg.appendChild(shape);
             }
         })();
@@ -508,7 +595,9 @@
         }
 
         function readFileAsDataURL(file) {
-            return new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result); rd.readAsDataURL(file); });
+            return new Promise(r => { const rd = new FileReader();
+                rd.onload = () => r(rd.result);
+                rd.readAsDataURL(file); });
         }
 
         // ============================================================
@@ -764,15 +853,12 @@
             addPageBtn.disabled = true;
 
             try {
-                // قراءة ملف PDF الأصلي
                 const pdfArrayBuffer = await addPageFile.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(pdfArrayBuffer);
 
-                // قراءة الصورة وتحويلها إلى بيانات مناسبة
                 const imageData = await readFileAsDataURL(addPageImage);
                 const imageBytes = await fetch(imageData).then(res => res.arrayBuffer());
 
-                // تحديد نوع الصورة (JPG أو PNG)
                 const mimeType = addPageImage.type;
                 let imageEmbed;
                 if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
@@ -783,12 +869,10 @@
                     throw new Error('نوع الصورة غير مدعوم، استخدم JPG أو PNG');
                 }
 
-                // إضافة صفحة جديدة بحجم الصورة
                 const { width, height } = imageEmbed;
                 const page = pdfDoc.addPage([width, height]);
                 page.drawImage(imageEmbed, { x: 0, y: 0, width, height });
 
-                // حفظ الملف الناتج
                 const pdfBytes = await pdfDoc.save();
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const link = document.createElement('a');
@@ -802,7 +886,6 @@
                 console.error(err);
             } finally {
                 addPageBtn.disabled = false;
-                // إعادة تعيين الحقول
                 fileAddPage.value = '';
                 imageAddPage.value = '';
                 addPageFile = null;
@@ -864,7 +947,6 @@
                 console.error(err);
             } finally {
                 mergeBtn.disabled = false;
-                // إعادة تعيين الحقل
                 fileMerge.value = '';
                 statusMerge.innerText = 'اختر ملفين على الأقل';
                 mergeBtn.disabled = true;
